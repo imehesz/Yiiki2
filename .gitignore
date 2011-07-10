@@ -3,3 +3,5 @@ protected/data/*
 protected/runtime/*
 *.zip
 *.sqlite
+development.config.php
+*.swp
