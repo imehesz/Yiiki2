@@ -1,4 +1,4 @@
-<div class="form">
+		<div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'page-form',
@@ -19,18 +19,6 @@
 		<?php echo $form->labelEx($model,'body'); ?>
 		<?php echo $form->textArea($model,'body',array('rows'=>6, 'cols'=>50)); ?>
 		<?php echo $form->error($model,'body'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'revision'); ?>
-		<?php echo $form->textField($model,'revision'); ?>
-		<?php echo $form->error($model,'revision'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'created'); ?>
-		<?php echo $form->textField($model,'created'); ?>
-		<?php echo $form->error($model,'created'); ?>
 	</div>
 
 	<div class="row buttons">

@@ -37,6 +37,14 @@ class Page extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			// hozzaadott szabalyaink
+			array( 'title', 'required', 'message' => 'Ejnye! Cím nem lehet üres!' ),
+			array( 'title', 'unique' ),
+			array('title',
+					'match',
+					'pattern'=>'/^[A-Za-z0-9_]+$/',
+					'message' => 'Jajj! Csak számokat, betűket és `_` jelet használhatsz! Bocsi' ),
+			// eddig ...
 			array('revision, created', 'numerical', 'integerOnly'=>true),
 			array('title', 'length', 'max'=>125),
 			array('body', 'safe'),
@@ -89,7 +97,34 @@ class Page extends CActiveRecord
 		$criteria->compare('created',$this->created);
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria'=>$criteria
 		));
 	}
+
+	function beforeSave()
+	{
+		$this->created = time();
+		return parent::beforeSave();
+	}
+
+	public function save( $validate = true )
+	{
+			if( $this->isNewRecord )
+			{
+					// noveljuk a verzio-szamot ...
+					$this->revision = $this->revision+1;
+					return parent::save( $validate );
+			}
+			else
+			{
+					// ha a save fuggvenyt false-kent hivjuk meg
+					// akkor a modell atugorja az ellenorzest igy nem kell a
+					// a title egyenisegevel bajlodnunk, es igy noveljuk a verzio szamot
+					$newpage = new Page();
+					$newpage->attributes = $this->attributes;
+					$newpage->save(false);
+					return true;
+			}
+	}
+
 }

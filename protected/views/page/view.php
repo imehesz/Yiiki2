@@ -1,27 +1,17 @@
 <?php
 $this->breadcrumbs=array(
-	'Pages'=>array('index'),
-	$model->title,
-);
-
-$this->menu=array(
-	array('label'=>'List Page', 'url'=>array('index')),
-	array('label'=>'Create Page', 'url'=>array('create')),
-	array('label'=>'Update Page', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete Page', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage Page', 'url'=>array('admin')),
+'Pages'=>array('index'),
+$model->title,
 );
 ?>
+<h1><?php echo strtoupper($model->title); ?></h1>
 
-<h1>View Page #<?php echo $model->id; ?></h1>
+<div>
+<?php echo CHtml::link('Oldalak Listaja',array('index')); ?> 
+<?php echo CHtml::link('Oldal Frissitese',array('update','title'=>$model->title)); ?> 
+<?php echo CHtml::linkButton('Oldal Torlese',array('submit'=>array('delete','title'=>$model->title),'confirm'=>'Biztos, hogy toroljem?')); ?> 
+</div>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
-	'data'=>$model,
-	'attributes'=>array(
-		'id',
-		'title',
-		'body',
-		'revision',
-		'created',
-	),
-)); ?>
+<div style="margin-top:20px;">
+<?php echo $model->body; ?>
+</div>

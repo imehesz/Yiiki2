@@ -8,6 +8,8 @@ class PageController extends Controller
 	 */
 	public $layout='//layouts/column2';
 
+	const PAGE_SIZE = 20;
+
 	/**
 	 * @return array action filters
 	 */
@@ -48,11 +50,26 @@ class PageController extends Controller
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
-	public function actionView($id)
+	public function actionView($title)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$model = Page::model()->find( 
+						array( 
+							'condition' 	=> 'title=:title', 
+							'order' 		=> 'revision DESC',
+							'params'		=> array(
+												':title' => $title
+							)
+						)
+					);
+
+		if( $model )
+		{
+			$this->render( 'view', array( 'model' => $model ) );
+		}
+		else
+		{
+			throw new CHttpException( 404, 'Upsz! Hat ezt az oldalt nem talaltuk :/' );
+		}
 	}
 
 	/**
@@ -70,7 +87,9 @@ class PageController extends Controller
 		{
 			$model->attributes=$_POST['Page'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			{
+				$this->redirect(array('view','title'=>$model->title));
+			}
 		}
 
 		$this->render('create',array(
@@ -83,9 +102,17 @@ class PageController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($title)
 	{
-		$model=$this->loadModel($id);
+		$model = Page::model()->find( 
+						array( 
+							'condition' 	=> 'title=:title', 
+							'order' 		=> 'revision DESC',
+							'params'		=> array(
+												':title' => $title
+							)
+						)
+					);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -94,7 +121,7 @@ class PageController extends Controller
 		{
 			$model->attributes=$_POST['Page'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('view','title'=>$model->title));
 		}
 
 		$this->render('update',array(
@@ -107,30 +134,37 @@ class PageController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDelete($id)
+	public function actionDelete( $title )
 	{
+		
 		if(Yii::app()->request->isPostRequest)
 		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			// FONTOS!
+			// az `admin` reszt magat kiszedtuk
+			// ezert a delete-t funkciot kicsit atirtuk
+			Page::model()->deleteAll( 'title=:title', array( ':title' => $title ) );
+			$this->redirect( $this->createUrl( '/page/index' ) );
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	/**
-	 * Lists all models.
-	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Page');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+			$criteria = new CDbCriteria();
+			$criteria->group = 'title';
+			$criteria->order = 'created DESC';
+
+			$dataProvider=new CActiveDataProvider('Page', array(
+									'pagination'=>array(
+											'pageSize'=>self::PAGE_SIZE,
+											),
+									'criteria' => $criteria,
+									));
+
+			$this->render('index',array(
+									'dataProvider'=>$dataProvider,
+									));
 	}
 
 	/**
