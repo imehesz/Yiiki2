@@ -9,6 +9,8 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
 if( YII_DEBUG )
 {
+	ini_set("display_errors", 1);
+	error_reporting(E_ALL);
 	$config=dirname(__FILE__).'/protected/config/development.config.php';
 }
 else
