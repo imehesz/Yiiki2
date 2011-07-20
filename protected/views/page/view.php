@@ -13,5 +13,7 @@ $model->title,
 </div>
 
 <div style="margin-top:20px;">
-<?php echo $model->body; ?>
+	<?php $this->beginWidget('CMarkdown');?>
+		<?php echo $model->body; ?>
+	<?php $this->endWidget();?>
 </div>

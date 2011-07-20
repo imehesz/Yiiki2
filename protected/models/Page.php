@@ -72,8 +72,8 @@ class Page extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'title' => 'Title',
-			'body' => 'Body',
+			'title' => 'Cim',
+			'body' => 'Szoveg',
 			'revision' => 'Revision',
 			'created' => 'Created',
 		);
